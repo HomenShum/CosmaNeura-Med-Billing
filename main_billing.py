@@ -21,10 +21,10 @@ import json
 from time import time, sleep
 
 ##### Datasets ############################################################################################################
-with open("feature7_cpt\CPT_analysis_result1692639740.772306.json", 'r') as json_file:
+with open("CPT_analysis_result1692639740.772306.json", 'r') as json_file:
     cpt_output = json.load(json_file)
 
-with open("feature7_icd\ICD_analysis_result1692639740.7752995.json", 'r') as json_file:
+with open("ICD_analysis_result1692639740.7752995.json", 'r') as json_file:
     icd_output = json.load(json_file)
 
 sorted_cpt_billing_code_list = sorted(cpt_output, key=lambda x: x['average_score'], reverse=True)[:20]
@@ -47,12 +47,12 @@ embeddings = OpenAIEmbeddings()
 docsearch = Pinecone.from_existing_index(index_name, embeddings)
 
 # read from file prompts\system\dictation_note_analysis.txt
-with open("prompts\\system\\dictation_note_analysis.txt", 'r') as user_file:
+with open("dictation_note_analysis.txt", 'r') as user_file:
     dictation_note_analysis = user_file.read()
     print(dictation_note_analysis)
 
 # read from file prompts\user\dictation_note_analysis_user.txt
-with open("prompts\\user\\dictation_note_analysis_user.txt", 'r') as user_file:
+with open("dictation_note_analysis_user.txt", 'r') as user_file:
     dictation_note_analysis_user = user_file.read()
     print(dictation_note_analysis_user)
 
