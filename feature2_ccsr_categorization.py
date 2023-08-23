@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from numpy.linalg import norm
 import openai
-from feature1_clinical_note_summarization import patient_note_analysis_output
 import streamlit as st
 
 ##### Datasets ############################################################################################################
@@ -29,10 +28,3 @@ def search_index(text, data, count=5):
         scores.append({'content': content, 'score': score})  # create similarity scores for each document
     ordered = sorted(scores, key=lambda d: d['score'], reverse=True)  # in scores list, sort 0th "score" data -to- last "score" data by highest to lowest
     return ordered[:count]  # return top count documents
-
-##### Main #################################################################################################################
-input_text = patient_note_analysis_output
-
-ccsr_categories_list = search_index(input_text, ccsr_df_feather['Embeddings'].tolist())
-
-# print(ccsr_categories_list)
