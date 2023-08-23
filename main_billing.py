@@ -91,7 +91,7 @@ def analyze_dictation_note(dictation_note):
 
     prompt = prompt + input_var_1 + input_patient_note_analysis + input_var_2
 
-    ccsr_categories_list = search_index(input_patient_note_analysis, ccsr_df_feather["'Default CCSR CATEGORY DESCRIPTION IP EMBEDDING'"].tolist())
+    ccsr_categories_list = search_index(input_patient_note_analysis, ccsr_df_feather['Embeddings'].tolist())
 
     ccsr_categories_list_list = []
 
