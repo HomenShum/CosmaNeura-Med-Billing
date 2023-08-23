@@ -194,7 +194,7 @@ if 'ccsr_categories_list_list' not in st.session_state:
     st.session_state['ccsr_categories_list_list'] = []
 
 # read from file prompts\input\hello.TXT
-with open("prompts\\input\\baby_delivery.TXT", 'r') as input_file:
+with open("baby_delivery.TXT", 'r') as input_file:
     dictation_note = input_file.read()
 
 input_text = st.text_area("Dictation Notes",
