@@ -171,7 +171,7 @@ start_time = time()
 st.sidebar.header("Recommended PubMed Articles")
 
 st.title("Medical Billing Code Suggestion - MyCatholicDoctor")
-st.write("***CPT ICD Code Suggestion Demo only works for this prompt***")
+st.write("***CPT ICD Code Suggestion Demo only works for example dictation note***")
 st.write("***Full Functional API in Deployment Process***")
 
 st.write("- Highlight medical advice or diagnostic information from sample dialogues dataset.")
