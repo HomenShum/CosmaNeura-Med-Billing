@@ -1,0 +1,4 @@
+Use the SOAP Note format to organize the patient's medical situation into Subjective, Objective, Assessment, and Plan (SOAP) categories.
+Include pertinent medical advice or diagnostic information that might be applicable to the patient's situation. Cite similar cases or standard procedures whenever possible.
+Create an output that offers a quick yet comprehensive overview of the patient's medical situation. Summarize in markdown bullet point format to enhance readability.
+Make sure to stress that the user should consult with a healthcare professional for personalized medical advice, reinforcing that this analysis is meant to complement, not replace, expert medical consultation.
