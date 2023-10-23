@@ -199,10 +199,13 @@ input_text = st.text_area("Dictation Notes",
                             key = 'dictation_notes',
                             height = 300)
 
+generated_result = []
+past_result = []
+
 # Add reset chat button
 if st.button('Reset Chat'):
-    st.session_state['generated'] = []
-    st.session_state['past'] = []
+    generated_result = st.empty()
+    past_result = st.empty()
 
 
 # Extract CPT options, keeping track of codes to avoid duplicates
@@ -225,25 +228,31 @@ for item in sorted_icd_billing_code_list:
 
 icd_options = [f"{code} - {desc}" for code, desc in sorted(icd_options_dict.items())]
 
-# Multiselect boxes for CPT and ICD codes (moved above the Analyze button)
-st.session_state['selected_cpt_options'] = st.multiselect(
-        'Select the CPT Codes and Descriptions:',
-        cpt_options,  # supposed to be a list of CPT options
-        st.session_state['selected_cpt_options'],
-        help='CPT codes are used to describe medical, surgical, and diagnostic services.',
-    )
+cpt_options = st.multiselect(
+    'Select the CPT Codes and Descriptions:',
+    cpt_options,  # supposed to be a list of CPT options
+    help='CPT codes are used to describe medical, surgical, and diagnostic services.',
+)
 
-st.session_state['selected_icd_options'] = st.multiselect(
-        'Select the ICD Codes and Descriptions:',
-        icd_options,  # supposed to be a list of ICD options
-        st.session_state['selected_icd_options'],
-        help='ICD codes are used to record, track, and monitor diagnoses.',
-    )
+icd_options = st.multiselect(
+    'Select the ICD Codes and Descriptions:',
+    icd_options,  # supposed to be a list of ICD options
+    help='ICD codes are used to record, track, and monitor diagnoses.',
+)
+
 # You can handle the selected options here
-st.write(f"You selected {len(st.session_state['selected_cpt_options'])} CPT code(s) and {len(st.session_state['selected_icd_options'])} ICD code(s).")
+st.write(f"You selected {len(cpt_options)} CPT code(s) and {len(icd_options)} ICD code(s).")
 
-if st.button('Analyze Dictation Notes'):  
+if st.button('Analyze Dictation Notes'): 
+    generated_result = st.empty()
+    past_result = st.empty()
     if openai.api_key and dictation_note:  # Only run if both API key and patient notes are provided
+        past_result = dictation_note
+        with st.expander(f"Dictation Note", expanded=True): 
+            if past_result:
+                st.subheader("Dictation Notes:")
+                st.write(past_result)
+
         with st.spinner('Analyzing...'):
             try:
                 # Run GPT model to analyze patient's note
@@ -257,34 +266,19 @@ if st.button('Analyze Dictation Notes'):
 
                 # Format the CCSR categories as a bulleted list
                 formatted_ccsr_categories = "CCSR Categories Identified:\n" + "\n".join(f"- {item}" for item in ccsr_categories_list_list)
-                
-                # Store the output
-                st.session_state.past.append(dictation_note) 
-                st.session_state.generated.append(formatted_highlighted_result)  # Store the highlighted and formatted result
-                st.session_state.generated.append(formatted_ccsr_categories)  # Store the formatted categories
+
+                # show output with expander and subheader
+                with st.expander(f"Analyzed Result", expanded=True):
+                    st.subheader("SOAP Note Analysis Result:")
+                    st.write(formatted_highlighted_result)
+
+                with st.expander(f"CCSR Categories", expanded=True):
+                    st.subheader("CCSR Categories:")
+                    st.write(formatted_ccsr_categories)
 
                 st.success('Analysis successful.')
             except Exception as e:
                 st.error(f"Error in analyzing dictation notes: {e}")
-
-
-if st.session_state['generated'] and st.session_state['past']:
-    for i in range(len(st.session_state['past'])-1, -1, -1):
-        
-        # Create collapsible container for each iteration
-        with st.expander(f"Dictation Note {i+1}", expanded=True):
-            
-            # Display the user's (i.e., doctor's) dictation notes
-            st.subheader("Dictation Notes:")
-            st.write(st.session_state['past'][i])
-            
-            # Display the highlighted and formatted result
-            st.subheader("SOAP Note Analysis Result:")
-            st.markdown(st.session_state['generated'][3*i])
-                        
-            # Display the formatted CCSR categories
-            st.subheader("CCSR Categories:")
-            st.markdown(st.session_state['generated'][3*i+1])
 
 # Perform PubMed search for each category
 if st.session_state['ccsr_categories_list_list']:
