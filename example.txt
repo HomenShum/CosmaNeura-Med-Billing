@@ -1,0 +1,73 @@
+Patient Information:
+Name: Ms. J.K.
+Age: 83
+Sex: Female
+Occupation: Retired Nurse
+Marital Status: Widowed
+Address: Lives with one of her daughters in a one-bedroom apartment on the third floor (building has an elevator).
+Social History: Non-smoker, non-alcoholic, no special diet. Previously worked as a nurse until age 67, financially supported by Social Security, Medicare, and her children.
+Chief Complaint:
+Substernal "toothache-like" chest pain lasting for 12 hours.
+History of Present Illness:
+Longstanding hypertension, well-controlled on diuretic therapy until now.
+History of intermittent midsternal chest pain, with the first episode in 1995 leading to a CPMC admission.
+Previous diagnosis of congestive heart failure.
+Current episode initiated at 11pm last night, with severe chest pain recurring this morning, prompting ER visit.
+ECG showed sinus tachycardia and marked ST elevation; patient received thrombolytic therapy and cardiac medications.
+Past Medical History:
+Cardiovascular: Hypertension, congestive heart failure.
+Gastrointestinal: GI hemorrhage in 1980, gastritis, diverticulosis, Hepatitis B post-transfusion in 1980.
+Genitourinary: Recurrent cystitis, last episode on 3/1/90.
+Musculoskeletal: Osteoarthritis in knees, shoulder, and hips.
+Allergies: Allergic to penicillin (rash).
+Immunizations: Annual flu vaccine, Pneumovax in 1996.
+Transfusions: 4 units in 1980.
+Hospitalizations/Procedures: Childbirth 48 years ago, mammogram in 1994, Flexible Sigmoidoscopy in 1997.
+Medications:
+Digoxin 0.125mg daily
+Enalapril 20mg twice daily
+Lasix 40mg every other day
+KCl 20mg daily
+Tylenol as needed for arthritis pain.
+Family History:
+Mother died at 36 from kidney failure, father died at 41 in a car accident, one sister died in childbirth.
+Four healthy daughters, a son who died at age 2 from pneumonia.
+No known family history of hypertension, diabetes, or cancer.
+Review of Systems:
+Constitutional: Good energy, stable weight.
+HEENT: Hearing loss, wears reading glasses, full set of dentures.
+Respiratory: No significant respiratory symptoms.
+Cardiac: See HPI.
+Vascular: Chronic venous stasis skin changes.
+G.I.: See past medical history.
+G.U.: See past medical history.
+Neuromuscular: Osteoarthritis.
+Emotional: No depression or anxiety.
+Others: No known hematological, rheumatic, endocrine or dermatological issues.
+Physical Exam:
+Vitals: BP 180/100, Pulse 96, Resp 24, Temp 100.2.
+General Appearance: Well-developed, slightly obese, sitting up in bed, breathing with slight difficulty.
+Cardiac: PMI at 6th ICS, regular rhythm with occasional extra beat, positive S4 gallop.
+Pulmonary: Bibasilar rales.
+Abdomen: Soft, flat, non-tender.
+Extremities: 1+ edema to the knees, chronic venous stasis changes in both legs.
+Neurological: Alert, oriented, cranial nerves III-XII intact except for hearing loss.
+Others: Mild kyphosis, liver span 10cm, no adenopathy.
+Laboratory Data:
+Complete Blood Count: WBC 12,400, Hgb 12.0, Hct 38.0, Plts 218,000.
+Chemistries: Na 143, K 4.1, Cl 103, CO2 29, Glu 102, BUN 9, Creat 0.8.
+Liver Function Tests: T bili 0.5, Dbili 0.1, Alk Phos 155, AST 55, ALT 26, LDH 274.
+Cardiac Markers: CPK 480, MB fraction positive, Troponin 25.
+Urinalysis: 2+ Albumin, many WBC, many RBC, 3+ bacteria.
+Imaging and ECG:
+ECG: NSR 96, ST elevations I, AVL, V4-V6; rare unifocal VPC’s.
+CXR: Probable cardiomegaly, mild PVC.
+Assessment:
+Acute anterolateral myocardial infarction with mild left ventricular dysfunction post thrombolysis therapy.
+Hypertension.
+Dysuria - probable recurrent cystitis.
+Plan:
+Continue aspirin, heparin, nitrates, beta blockers, nasal oxygen; monitor with serial physical exams, EKGs, and labs.
+Obtain echocardiogram to assess post MI heart function and murmurs; if LV ejection fraction is preserved, start early beta blocker therapy.
+Continue ACE inhibitor therapy; monitor blood pressure.
+Start Bactrim treatment for probable recurrent cystitis due to dysuria and pyuria; follow up on urine culture result.
