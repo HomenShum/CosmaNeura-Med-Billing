@@ -47,12 +47,12 @@ embeddings = OpenAIEmbeddings()
 docsearch = Pinecone.from_existing_index(index_name, embeddings)
 
 # read from file prompts\system\dictation_note_analysis.txt
-with open("dictation_note_analysis.txt", 'r') as user_file:
+with open("patient_physician_SOAP_note_system.txt", 'r') as user_file:
     dictation_note_analysis = user_file.read()
     print(dictation_note_analysis)
 
 # read from file prompts\user\dictation_note_analysis_user.txt
-with open("dictation_note_analysis_user.txt", 'r') as user_file:
+with open("patient_physician_SOAP_note_user.txt", 'r') as user_file:
     dictation_note_analysis_user = user_file.read()
     print(dictation_note_analysis_user)
 
@@ -69,6 +69,7 @@ def gpt_completion(prompt, model='gpt-4', temp=0, stop=["<<END>>"]):
         model=model,
         messages=[
             {"role": "system", "content": dictation_note_analysis },
+            {"role": "user", "content": dictation_note_analysis_user},
             {"role": "user", "content": prompt},
         ],
         temperature=temp,
@@ -81,39 +82,22 @@ def gpt_completion(prompt, model='gpt-4', temp=0, stop=["<<END>>"]):
 def analyze_dictation_note(dictation_note):
     start_time = time()
 
-    prompt = dictation_note_analysis_user
+    SOAP_note_analysis = gpt_completion(dictation_note)
+    result = SOAP_note_analysis.split("<<END>>")[0].strip()
 
-    input_var_1 = "Dictation Notes: \n"
-
-    input_patient_note_analysis = gpt_completion(dictation_note)
-
-    input_var_2 = "Clinical Classifications Software Refined (CCSR) categories listed below: \n"
-
-    prompt = prompt + input_var_1 + input_patient_note_analysis + input_var_2
-
-    ccsr_categories_list = search_index(input_patient_note_analysis, ccsr_df_feather['Embeddings'].tolist())
+    ccsr_categories_list = search_index(SOAP_note_analysis, ccsr_df_feather['Embeddings'].tolist())
 
     ccsr_categories_list_list = []
 
     for i, category in enumerate(ccsr_categories_list, start=1):
         content = category['content']
-        prompt += f"{i}. {content}\n"
-        ccsr_categories_list_list.append(content)
-
-    search = docsearch.similarity_search(prompt)
-    input_dialogues_data = f"sample physician diagnosis dataset: \n{search[0].page_content}\n"
-    prompt = prompt + input_dialogues_data +    """            
-                                                Output in markdown or list format:
-                                                **Medical advice or diagnostic information based on similar real diagnostics:**
-                                                <<Output Here>>
-                                                """
-
-    result = gpt_completion(prompt)
+        # append both i and category
+        ccsr_categories_list_list.append(f"{i}. {content}")
 
     end = time()
     print(f"Runtime of the program is {end - start_time}")
 
-    return result, input_patient_note_analysis, ccsr_categories_list_list
+    return result, ccsr_categories_list_list
 
 def search(query):
     Entrez.email = 'hshum2018@gmail.com'
@@ -134,6 +118,7 @@ def fetch_details(id_list):
     results = Entrez.read(handle)
     return results
 
+@st.cache_data
 def get_abstract(paper):
     abstract = ''
     if 'Abstract' in paper['MedlineCitation']['Article']:
@@ -142,12 +127,21 @@ def get_abstract(paper):
             abstract = ' '.join(abstract)
     return abstract
 
-def format_text(text):
-    formatted_text = "\n".join(f"- {item.strip()}" for item in text.split("-")[1:])
-    if "diagnostic information" in text.lower():
-        return "Medical advice or diagnostic information based on similar real diagnostics:\n" + formatted_text
-    else:
-        return formatted_text
+@st.cache_data
+def format_to_bullet_list(message):
+    # Split the message by line breaks and '- ' sequences
+    lines = re.split(r'\n|- ', message)
+    
+    # Strip whitespace from each line and filter out any empty lines
+    lines = [line.strip() for line in lines if line.strip()]
+    
+    # Format each line as a bullet item
+    bullet_list = [f"- {line}" for line in lines]
+    
+    # Join the bullet items into a single string with line breaks between each item
+    formatted_message = "\n".join(bullet_list)
+    
+    return formatted_message
 
 def gpt3_embedding(content, engine='text-embedding-ada-002'):
     content = content.encode(encoding='ASCII',errors='ignore').decode() 
@@ -155,6 +149,7 @@ def gpt3_embedding(content, engine='text-embedding-ada-002'):
     vector = response['data'][0]['embedding']  
     return vector
 
+@st.cache_data
 def similarity(v1, v2):
     if v1 is None or v2 is None:
         return 0.0
@@ -170,9 +165,11 @@ def similarity(v1, v2):
 start_time = time()
 st.sidebar.header("Recommended PubMed Articles")
 
-st.title("Medical Billing Code Suggestion - MyCatholicDoctor")
-st.write("- Highlight medical advice or diagnostic information from sample dialogues dataset.")
-st.write("- Ensure the output is in markdown bullet point format for clarity.")
+st.title("Medical Billing Code Suggestion - CosmaNeura")
+st.write("- Extract and highlight medical or diagnostic information from MyCatholicDoctor's sample dialogues dataset.")
+st.write("- Render the highlighted information in markdown bullet point format for clarity.")
+st.write("- Utilize CosmaNeura's algorithm to provide accurate medical billing code recommendations.")
+st.write("- Enable a streamlined review and confirmation of suggested billing codes within the user-friendly interface.")
 
 st.write("Please enter dictation notes below:")
 
@@ -194,7 +191,7 @@ if 'ccsr_categories_list_list' not in st.session_state:
     st.session_state['ccsr_categories_list_list'] = []
 
 # read from file prompts\input\hello.TXT
-with open("baby_delivery.TXT", 'r') as input_file:
+with open("example.txt", 'r') as input_file:
     dictation_note = input_file.read()
 
 input_text = st.text_area("Dictation Notes",
