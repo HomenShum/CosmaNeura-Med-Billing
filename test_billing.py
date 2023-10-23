@@ -191,7 +191,7 @@ if 'ccsr_categories_list_list' not in st.session_state:
     st.session_state['ccsr_categories_list_list'] = []
 
 # read from file prompts\input\hello.TXT
-with open("example.txt", 'r') as input_file:
+with open("SampleWriteUp.txt", 'r') as input_file:
     dictation_note = input_file.read()
 
 input_text = st.text_area("Dictation Notes",
@@ -229,60 +229,80 @@ icd_options = [f"{code} - {desc}" for code, desc in sorted(icd_options_dict.item
 st.session_state['selected_cpt_options'] = st.multiselect(
         'Select the CPT Codes and Descriptions:',
         cpt_options,  # supposed to be a list of CPT options
-        st.session_state['selected_cpt_options']
+        st.session_state['selected_cpt_options'],
+        help='CPT codes are used to describe medical, surgical, and diagnostic services.',
     )
 
 st.session_state['selected_icd_options'] = st.multiselect(
         'Select the ICD Codes and Descriptions:',
         icd_options,  # supposed to be a list of ICD options
-        st.session_state['selected_icd_options']
+        st.session_state['selected_icd_options'],
+        help='ICD codes are used to record, track, and monitor diagnoses.',
     )
 # You can handle the selected options here
 st.write(f"You selected {len(st.session_state['selected_cpt_options'])} CPT code(s) and {len(st.session_state['selected_icd_options'])} ICD code(s).")
 
-# Analyze patient notes button
 if st.button('Analyze Dictation Notes'):  
-
     if openai.api_key and dictation_note:  # Only run if both API key and patient notes are provided
+        with st.spinner('Analyzing...'):
+            try:
+                # Run GPT model to analyze patient's note
+                result, ccsr_categories_list_list = analyze_dictation_note(dictation_note)
 
-        # Run GPT model to analyze patient's note
-        input_patient_note_analysis, result, ccsr_categories_list_list = analyze_dictation_note(dictation_note)
+                # Update the session state for categories
+                st.session_state['ccsr_categories_list_list'] = ccsr_categories_list_list
 
-        st.session_state['ccsr_categories_list_list'] = ccsr_categories_list_list
+                # Format the result and terms
+                formatted_highlighted_result = format_to_bullet_list(result)
 
-        # Format the result and CCSR categories as a bulleted list
-        formatted_result = format_text(result)
-        formatted_ccsr_categories = "CCSR Categories Identified:\n" + "\n".join(f"- {item}" for item in ccsr_categories_list_list)
+                # Format the CCSR categories as a bulleted list
+                formatted_ccsr_categories = "CCSR Categories Identified:\n" + "\n".join(f"- {item}" for item in ccsr_categories_list_list)
+                
+                # Store the output
+                st.session_state.past.append(dictation_note) 
+                st.session_state.generated.append(formatted_highlighted_result)  # Store the highlighted and formatted result
+                st.session_state.generated.append(formatted_ccsr_categories)  # Store the formatted categories
 
-        # Store the output
-        st.session_state.past.append(dictation_note) 
-        st.session_state.generated.append(formatted_result)  # Store the formatted result
-        st.session_state.generated.append(input_patient_note_analysis)
-        st.session_state.generated.append(formatted_ccsr_categories)  # Store the formatted categories
+                st.success('Analysis successful.')
+            except Exception as e:
+                st.error(f"Error in analyzing dictation notes: {e}")
+
 
 if st.session_state['generated'] and st.session_state['past']:
     for i in range(len(st.session_state['past'])-1, -1, -1):
-        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
-        message(st.session_state['generated'][3*i], key=str(3*i))  # Display the formatted result
-        message(st.session_state['generated'][3*i+1], key=str(3*i+1))
-        message(st.session_state['generated'][3*i+2], key=str(3*i+2))  # Display the formatted categories
+        
+        # Create collapsible container for each iteration
+        with st.expander(f"Dictation Note {i+1}", expanded=True):
+            
+            # Display the user's (i.e., doctor's) dictation notes
+            st.subheader("Dictation Notes:")
+            st.write(st.session_state['past'][i])
+            
+            # Display the highlighted and formatted result
+            st.subheader("SOAP Note Analysis Result:")
+            st.markdown(st.session_state['generated'][3*i])
+                        
+            # Display the formatted CCSR categories
+            st.subheader("CCSR Categories:")
+            st.markdown(st.session_state['generated'][3*i+1])
 
 # Perform PubMed search for each category
 if st.session_state['ccsr_categories_list_list']:
     for category in st.session_state['ccsr_categories_list_list']:
-        results = search(category)
-        id_list = results['IdList']
-        papers = fetch_details(id_list)
-        for i, paper in enumerate(papers['PubmedArticle']):
-            title = paper['MedlineCitation']['Article']['ArticleTitle']
-            author_list = paper['MedlineCitation']['Article']['AuthorList']
-            authors = ', '.join([author.get('LastName', '') for author in author_list])
-            abstract = get_abstract(paper)
-            
-            # Show article in sidebar
-            st.sidebar.subheader(f'Title: {title}')
-            st.sidebar.write(f'Authors: {authors}')
-            st.sidebar.write(f'Abstract: {abstract}')
+        if st.sidebar.checkbox(f'Show Articles for {category}'):
+            results = search(category)
+            id_list = results['IdList']
+            papers = fetch_details(id_list)
+            for i, paper in enumerate(papers['PubmedArticle']):
+                title = paper['MedlineCitation']['Article']['ArticleTitle']
+                author_list = paper['MedlineCitation']['Article']['AuthorList']
+                authors = ', '.join([author.get('LastName', '') for author in author_list])
+                abstract = get_abstract(paper)
+                
+                # Show article in sidebar
+                st.sidebar.subheader(f'Title: {title}')
+                st.sidebar.write(f'Authors: {authors}')
+                st.sidebar.write(f'Abstract: {abstract}')
 
 end_time = time() - start_time
 print(f"Total time of analysis: {str(end_time)} seconds")
